@@ -30,7 +30,7 @@ def call(){
                         def test = new org.devops.lb_analisissonarqube()
                         test.testCoverage()
                         def analisysSonar = new org.devops.lb_analisissonarqube()
-                        analisiSonar.analisisSonar("${PROJECT}")
+                        analisysSonar.analisisSonar("${PROJECT}")
                     }
                 }
             }
