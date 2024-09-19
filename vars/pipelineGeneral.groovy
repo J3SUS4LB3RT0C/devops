@@ -5,7 +5,7 @@ def call(){
         agent any
 
         tools{
-            nodejs 'NodeJS18'
+            nodejs 'NodeJS'
         }
         
         environment{
