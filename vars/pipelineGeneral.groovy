@@ -1,5 +1,5 @@
 def call(){
-    
+
     pipeline{
 
         agent any
@@ -13,24 +13,38 @@ def call(){
         }
 
         stages{
-            stage('Construccion App') {
+            stage('Fase 2: Construcción de imagen en Docker Desktop') {
                 steps {
                     script {
-                        def cloneapp = new org.devops.lb_buildartefacto()
-                        cloneapp.clone()
-                        def buildapp = new org.devops.lb_buildartefacto()
-                        buildapp.install()
+                        def buildimage = new org.devops.lb_buildimagen()
+                        buildimage.buildImageDocker("${projectName}")
                     }
                 }
             }
 
-            stage('Sonar Analisis'){
-                steps{
-                    script{
-                        def test = new org.devops.lb_analisissonarqube()
-                        test.runTest()
-                        def analisysSonarqube = new org.devops.lb_analisissonarqube()
-                        analisysSonarqube.analisys("${projectName}")
+            stage('Fase 2: Alojando la imagen en Docker Hub') {
+                steps {
+                    script {
+                        def publishimage = new org.devops.lb_publicardockerhub()
+                        publishimage.cargarDockerHub("${projectName}")
+                    }
+                }
+            }
+
+            stage('Fase 2: Desplegando el contenedor') {
+                steps {
+                    script {
+                        def deployingContainer = new org.devops.lb_deploydocker()
+                        deployingContainer.despliegueContenedor("${projectName}")
+                    }
+                }
+            }
+
+            stage('Fase 2: Análisis de OWASP') {
+                steps {
+                    script {
+                        def analisysOWASP = new org.devops.lb_owasp()
+                        analisysOWASP.analisisOWASP()
                     }
                 }
             }
