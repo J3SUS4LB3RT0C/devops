@@ -9,16 +9,10 @@ def call(){
         }
         
         environment{
-            projectName ="${env.UrlGitHub}".replaceAll('.+/(.+)\\.git', '$1')toLowerCase()
-        } 
-
-       /* triggers{
-            pollSCM('* * * * * 1-5')
-        } */
-        
+            projectName = "${env.UrlGitHub}".replaceAll('.+/(.+)\\.git', '$1').toLowerCase()
+        }
 
         stages{
-
             stage('Fase 2: Construcción de imagen en Docker Desktop') {
                 steps {
                     script {
@@ -28,37 +22,32 @@ def call(){
                 }
             }
 
-            stage('Fase 2: publicar imagen a docker hub.') {
+            stage('Fase 2: Alojando la imagen en Docker Hub') {
                 steps {
                     script {
-                        def publicImage = new org.devops.lb_publicardockerhub()
-                        publicImage.publicarImage("${projectName}")
-                    }
-                    
-                } 
-            }
-
-            stage('Fase 2: Desplegar imagen en docker') {
-                steps {
-                    script{
-                            def deployImg = new org.devops.lb_deploydocker()
-                            deployImg.despliegueContenedor("${projectName}")
-                        }
-                    }    
-                }                                        
-
-           stage('Fase 2: analisis con owasp') {
-                steps {
-                    script{
-                        def owasp = new org.devops.lb_owasp()
-                        owasp.AnalisisOwasp("${projectName}")
+                        def publishimage = new org.devops.lb_publicardockerhub()
+                        publishimage.cargarDockerHub("${projectName}")
                     }
                 }
+            }
 
+            stage('Fase 2: Desplegando el contenedor') {
+                steps {
+                    script {
+                        def deployingContainer = new org.devops.lb_deploydocker()
+                        deployingContainer.despliegueContenedor("${projectName}")
+                    }
+                }
+            }
+
+            stage('Fase 2: Análisis de OWASP') {
+                steps {
+                    script {
+                        def analisysOWASP = new org.devops.lb_owasp()
+                        analisysOWASP.analisisOWASP()
+                    }
+                }
+            }
         }
-    
-
     }
-    
-  }
 }
