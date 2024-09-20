@@ -9,10 +9,16 @@ def call(){
         }
         
         environment{
-            projectName = "${env.GIT_URL_1}".replaceAll('.+/(.+)\\.git', '$1')toLowerCase()
-        }
+            projectName = "${env.UrlGitHub}".replaceAll('.+/(.+)\\.git', '$1')toLowerCase()
+        } 
+
+       /* triggers{
+            pollSCM('* * * * * 1-5')
+        } */
+        
 
         stages{
+
             stage('Fase 2: Construcción de imagen en Docker Desktop') {
                 steps {
                     script {
@@ -22,54 +28,37 @@ def call(){
                 }
             }
 
-            stage('Fase 2: Alojando la imagen en Docker Hub') {
+            stage('Fase 2: publicar imagen a docker hub.') {
                 steps {
                     script {
-                        def publishimage = new org.devops.lb_publicardockerhub()
-                        publishimage.cargarDockerHub("${projectName}")
+                        def publicImage = new org.devops.lb_publicardockerhub()
+                        publicImage.publicarImage("${projectName}")
                     }
-                }
+                    
+                } 
             }
 
-            stage('Fase 2: Desplegando el contenedor') {
+            stage('Fase 2: Desplegar imagen en docker') {
                 steps {
-                    script {
-                        def deployingContainer = new org.devops.lb_deploydocker()
-                        deployingContainer.despliegueContenedor("${projectName}")
-                    }
-                }
-            }
-
-            stage('Fase 2: Análisis de OWASP') {
-                steps {
-                    script {
-                        def analisysOWASP = new org.devops.lb_owasp()
-                        analisysOWASP.analisisOWASP()
-                    }
-                }
-            }
-
-            /*stage('Fase 1: Proceso de construcción') {
-                steps {
-                    script {
-                        def cloneapp = new org.devops.lb_buildartefacto()
-                        cloneapp.clone()
-                        def buildapp = new org.devops.lb_buildartefacto()
-                        buildapp.install()
-                    }
-                }
-            }
-
-            stage('Fase 1: Análisis de Sonarqube'){
-                steps{
                     script{
-                        def test = new org.devops.lb_analisissonarqube()
-                        test.runTest()
-                        def analisysSonarqube = new org.devops.lb_analisissonarqube()
-                        analisysSonarqube.analisys("${projectName}")
+                            def deployImg = new org.devops.lb_deploydocker()
+                            deployImg.despliegueContenedor("${projectName}")
+                        }
+                    }    
+                }                                        
+
+           stage('Fase 2: analisis con owasp') {
+                steps {
+                    script{
+                        def owasp = new org.devops.lb_owasp()
+                        owasp.AnalisisOwasp("${projectName}")
                     }
                 }
-            }*/
+
         }
+    
+
     }
+    
+  }
 }
