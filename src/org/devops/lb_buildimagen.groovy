@@ -1,5 +1,5 @@
 package org.devops
 
-def buildImageDocker(projectGitName){
-    sh "docker build -t jesuscastellanos/${projectGitName} ."
+def buildImageDocker(projectName){
+    sh "docker build -t ${projectName} ."
 }
