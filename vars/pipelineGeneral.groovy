@@ -9,7 +9,7 @@ def call(){
         }
         
         environment{
-            projectName = "${env.UrlGitHub}".replaceAll('.+/(.+)\\.git', '$1').toLowerCase()
+            projectName = https://github.com/J3SUS4LB3RT0C/react-test.git
         } 
 
        /* triggers{
