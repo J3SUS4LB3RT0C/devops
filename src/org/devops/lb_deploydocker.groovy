@@ -1,11 +1,12 @@
 package org.devops
 
-def despliegueContenedor(projectGitName){
-    //sh "docker stop ${projectGitName}"
-    //sh "docker rm ${projectGitName}"
-    sh "docker pull jesuscastellanos/react-test-jenkinsfile"
-    sh """ docker run -d --name ${projectGitName} \
-    --network=${env.NameNetwork} -p 5174:5174 \
-    --user root jesuscastellanos/${projectGitName}
-    """
+def despliegueContenedor(projectName) {
+    sh "docker stop ${projectName} || true"
+    sh "docker rm ${projectName} || true"
+    
+    def networkName = env.NET_NAME ?: 'default_network' // Valor por defecto
+    println "Network name: ${NameNetwork}"
+    
+    sh "docker pull jesuscastellanos/${projectName}"
+    sh "docker run -d --name ${projectName} --network=${NameNetwork} -p 5174:5174 --user root jesuscastellanos/${projectName}"
 }
